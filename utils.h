@@ -55,6 +55,8 @@ typedef struct fila_t {
 
 // Protótipos das funções
 
+void print_matriz(tile_t** board, int lin, int col);
+
 int calc_dist(no_t* no);
 
 no_t* init_prob1();
@@ -71,15 +73,19 @@ void inserir_fila(fila_t* fila, no_t* no);
 
 elemento_t* remover_primeiro(fila_t* fila);
 
+int busca_fila(fila_t* estados, no_t* no, int lin, int col);
+
+int sao_iguais(tile_t** board1, tile_t** board2, int lin, int col);
+
 int caminho_livre(tile_t** board, int fromX, int fromY, int toX, int toY);
 
 int pode_mover_peca(tile_t** board, int fromX, int fromY, int toX, int toY);
 
 int verifica_obj(no_t* no);
 
-void gerar_sucessor(fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj);
+void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj);
 
-void percorrer_mesa(fila_t* fila, elemento_t* elemento);
+void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento);
 
 void a_estrela1();
 
