@@ -97,6 +97,64 @@ no_t* init_prob1(){
     return no;
 }
 
+no_t* init_prob2(){
+    no_t* no = calloc(1, sizeof(no_t));
+    int linhas = 4;
+    int colunas = 4;
+
+    tile_t** board = calloc(linhas, sizeof(tile_t*));
+    for (int i = 0; i<linhas; i++){
+        board[i] = calloc(colunas, sizeof(tile_t));
+    }
+
+    board[0][0].cor = 1;
+    board[0][0].peca = 3;
+    board[0][1].cor = 1;
+    board[0][1].peca = 3;
+    board[0][2].cor = 1;
+    board[0][2].peca = 3;
+    board[0][3].cor = 1;
+    board[0][3].peca = 3;
+
+    board[1][0].cor = 1;
+    board[1][0].peca = 4;
+    board[1][1].cor = 1;
+    board[1][1].peca = 4;
+    board[1][2].cor = 1;
+    board[1][2].peca = 4;
+    board[1][3].cor = 1;
+    board[1][3].peca = 4;
+
+    board[2][0].cor = 1;
+    board[2][0].peca = 2;
+    board[2][1].cor = 1;
+    board[2][1].peca = 2;
+    board[2][2].cor = 1;
+    board[2][2].peca = 2;
+    board[2][3].cor = 1;
+    board[2][3].peca = 2;
+
+    board[3][0].cor = 0;
+    board[3][0].peca = 0;
+    board[3][1].cor = 0;
+    board[3][1].peca = 7;
+    board[3][2].cor = 0;
+    board[3][2].peca = 7;
+    board[3][3].cor = 1;
+    board[3][3].peca = 1;
+
+    no->board = board;
+    no->posX = 3;
+    no->posY = 3;
+    no->goalX = 3;
+    no->goalY = 0;
+    no->distancia = calc_dist(no);
+    no->custo = 0;
+    no->pai = NULL;
+
+    return no;
+}
+
 tile_t** copia_board(tile_t** board, int lin, int col){
     tile_t** nova_board = calloc(lin, sizeof(tile_t*));
     for(int i=0; i<lin; i++){
@@ -257,7 +315,7 @@ int pode_mover_peca(tile_t** board, int fromX, int fromY, int toX, int toY) {
         case 1:
             //Peça branca
             if(board[fromY][fromX].cor == 1){
-
+                if((dy==1)&&(dx==0)) return 1;
             }
             //Peça preta
             else{
@@ -384,6 +442,39 @@ void a_estrela1(){
     fila->col = 6;
     inserir_fila(fila, init_prob1());
     elemento_t* elemento_atual;
+
+    while(fila->tam > 0){
+        elemento_atual = remover_primeiro(fila);
+        percorrer_mesa(estados_visitados, fila, elemento_atual, &resposta);
+        if(resposta){
+            print_resposta(fila, fila->comeco->no);
+            exit(0);
+        }
+    }
+
+    printf("Não foi encontrado solução\n");
+}
+
+no_t* a_estrela(int problema, no_t* entrada){
+    fila_t* fila = cria_fila();
+    fila_t* estados_visitados = cria_fila();
+    elemento_t* elemento_atual;
+    int resposta = 0;
+    if(problema == 1){
+        fila->lin = 3;
+        fila->col = 6;
+        inserir_fila(fila, init_prob1());
+    }else if(problema == 2){
+        fila->lin = 4;
+        fila->col = 4;
+        inserir_fila(fila, init_prob2());
+    }else{
+        fila->lin = 4;
+        fila->col = 4;
+        entrada->goalX = 0;
+        entrada->goalY = 3;
+        inserir_fila(fila, entrada);
+    }
 
     while(fila->tam > 0){
         elemento_atual = remover_primeiro(fila);

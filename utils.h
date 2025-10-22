@@ -1,6 +1,3 @@
-#ifndef JOGO_H
-#define JOGO_H
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -61,6 +58,8 @@ int calc_dist(no_t* no);
 
 no_t* init_prob1();
 
+no_t* init_prob2();
+
 tile_t** copia_board(tile_t** board, int lin, int col);
 
 no_t* cria_no(tile_t** board, no_t* pai);
@@ -73,9 +72,9 @@ void inserir_fila(fila_t* fila, no_t* no);
 
 elemento_t* remover_primeiro(fila_t* fila);
 
-int busca_fila(fila_t* estados, no_t* no, int lin, int col);
-
 int sao_iguais(tile_t** board1, tile_t** board2, int lin, int col);
+
+int busca_fila(fila_t* estados, no_t* no, int lin, int col);
 
 int caminho_livre(tile_t** board, int fromX, int fromY, int toX, int toY);
 
@@ -85,8 +84,11 @@ int verifica_obj(no_t* no);
 
 void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj, int* flag);
 
+void print_resposta(fila_t* fila, no_t* no);
+
 void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int* flag);
 
 void a_estrela1();
 
-#endif // JOGO_H
+no_t* a_estrela(int problema, no_t* entrada);
+
