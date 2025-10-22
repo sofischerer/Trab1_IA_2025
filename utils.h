@@ -83,9 +83,9 @@ int pode_mover_peca(tile_t** board, int fromX, int fromY, int toX, int toY);
 
 int verifica_obj(no_t* no);
 
-void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj);
+void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj, int* flag);
 
-void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento);
+void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int* flag);
 
 void a_estrela1();
 

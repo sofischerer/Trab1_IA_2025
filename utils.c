@@ -299,7 +299,7 @@ int verifica_obj(no_t* no){
 }
 
 //ki e kj são a nova posição
-void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj){
+void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int i, int j, int ki, int kj, int* flag){
     no_t* novo_no = cria_no(copia_board(elemento->no->board, fila->lin, fila->col), elemento->no);
     novo_no->board[ki][kj].peca = novo_no->board[i][j].peca;
     novo_no->board[ki][kj].cor = novo_no->board[i][j].cor;
@@ -315,8 +315,9 @@ void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* element
     novo_no->distancia = calc_dist(novo_no);
     if(verifica_obj(novo_no)){
         //FAZ ALGO
-        printf("achei\n");
-        exit(0);
+        inserir_fila(fila, novo_no);
+        *flag = 1;
+        return;
     }
     printf("cavalo importante está em (%d, %d)\n", novo_no->posY, novo_no->posX);
     inserir_fila(fila, novo_no);
@@ -324,8 +325,16 @@ void gerar_sucessor(fila_t* estados_visitados, fila_t* fila, elemento_t* element
     print_matriz(novo_no->board, fila->lin, fila->col);
 }
 
+void print_resposta(fila_t* fila, no_t* no){
+    no_t* atual = no;
+    while(atual != NULL){
+        print_matriz(atual->board, fila->lin, fila->col);
+        atual = atual->pai;
+    }
+}
 
-void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento){
+
+void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* elemento, int* flag){
     for(int i=0; i<fila->lin; i++){
         for(int j=0; j<fila->col; j++){
             //Percorre board testando espaços vazios
@@ -335,25 +344,29 @@ void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* element
                         if((i-k>=0)&&(kj>=0)&&(kj<fila->col)){
 
                             if(pode_mover_peca(elemento->no->board, kj, i-k, j, i)){
-                                gerar_sucessor(estados_visitados, fila, elemento, i-k, kj, i, j);
+                                gerar_sucessor(estados_visitados, fila, elemento, i-k, kj, i, j, flag);
+                                if(*flag) return;
                             }
                         }
                         if((i+k<fila->lin)&&(kj>=0)&&(kj<fila->col)){
                             if(pode_mover_peca(elemento->no->board, kj, i+k, j, i)){
-                                gerar_sucessor(estados_visitados, fila, elemento, i+k, kj, i, j);
+                                gerar_sucessor(estados_visitados, fila, elemento, i+k, kj, i, j, flag);
+                                if(*flag) return;
                             }
                         }
                     }
                     for(int ki=i-k+1; ki<i+k; ki++){
                         if((j-k>=0)&&(ki>=0)&&(ki<fila->lin)){
                             if(pode_mover_peca(elemento->no->board, j-k, ki, j, i)){
-                                gerar_sucessor(estados_visitados, fila, elemento, ki, j-k, i, j);
+                                gerar_sucessor(estados_visitados, fila, elemento, ki, j-k, i, j, flag);
+                                if(*flag) return;
                             }
                         }
                         if((j+k<fila->col)&&(ki>=0)&&(ki<fila->lin)){
 
                             if(pode_mover_peca(elemento->no->board, j+k, ki, j, i)){
-                                gerar_sucessor(estados_visitados, fila, elemento, ki, j+k, i, j);
+                                gerar_sucessor(estados_visitados, fila, elemento, ki, j+k, i, j, flag);
+                                if(*flag) return;
                             }
                         }
                     }
@@ -366,6 +379,7 @@ void percorrer_mesa(fila_t* estados_visitados, fila_t* fila, elemento_t* element
 void a_estrela1(){
     fila_t* fila = cria_fila();
     fila_t* estados_visitados = cria_fila();
+    int resposta = 0;
     fila->lin = 3;
     fila->col = 6;
     inserir_fila(fila, init_prob1());
@@ -373,7 +387,11 @@ void a_estrela1(){
 
     while(fila->tam > 0){
         elemento_atual = remover_primeiro(fila);
-        percorrer_mesa(estados_visitados, fila, elemento_atual);        
+        percorrer_mesa(estados_visitados, fila, elemento_atual, &resposta);
+        if(resposta){
+            print_resposta(fila, fila->comeco->no);
+            exit(0);
+        }
     }
 
     printf("Não foi encontrado solução\n");
